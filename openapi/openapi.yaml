@@ -1,0 +1,60 @@
+openapi: "3.1.0"
+info:
+  title: API for Warg Studio
+  summary: Warg Studio API
+  description: >
+    This API provides a comprehensive set of endpoints for interacting with Warg Studio's
+    resources
+  version: "1.0"
+servers:
+  - url: https://api.server.test/v1
+paths:
+  /health:
+    get:
+      operationId: checkHealth
+      summary: Health check endpoint
+      description: >
+        This endpoint can be used to check the health of the API
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Health"
+        "default":
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+components:
+  schemas:
+    ErrorModel:
+      type: object
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+          description: The error code
+          example: "WARG-001"
+        message:
+          type: string
+          description: The error message
+          example: "Internal server error"
+        detailed_message:
+          type: string
+          description: A detailed error message
+          example: "An internal server error occurred while processing the request"
+    Health:
+      type: object
+      properties:
+        status:
+          type: string
+          description: The status of the API
+          enum:
+            - "Up"
+            - "Degraded"
+          example: "Up"

@@ -1,0 +1,18 @@
+package main
+
+import (
+	"embed"
+
+	"github.com/neel4os/warg/cmd"
+	"github.com/neel4os/warg/internal/util"
+	"github.com/spf13/cobra"
+)
+
+//go:embed console/.output/public/*
+var staticFiles embed.FS
+
+func main() {
+	util.NewStaticFileLocation(&staticFiles)
+	command := cmd.New()
+	cobra.CheckErr(command.Execute())
+}
