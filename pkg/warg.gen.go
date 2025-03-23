@@ -28,7 +28,7 @@ type ErrorModel struct {
 // Health defines model for Health.
 type Health struct {
 	// Status The status of the API
-	Status *HealthStatus `json:"status,omitempty"`
+	Status HealthStatus `json:"status"`
 }
 
 // HealthStatus The status of the API

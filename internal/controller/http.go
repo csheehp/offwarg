@@ -9,7 +9,9 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/neel4os/warg/internal/config"
+	"github.com/neel4os/warg/internal/handler"
 	"github.com/neel4os/warg/internal/util"
+	"github.com/neel4os/warg/pkg"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -32,6 +34,8 @@ func (h *httpComponent) Init() {
 	st := util.NewStaticFileLocation(nil)
 	h.e.StaticFS("/", echo.MustSubFS(st.GetStaticFiles(), "console/.output/public"))
 	h.customize()
+	handler := handler.NewHandler()
+	pkg.RegisterHandlers(h.e, handler)
 }
 
 func (h *httpComponent) Run() {
