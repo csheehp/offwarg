@@ -8,6 +8,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+//go:generate go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen -config cfg.yaml ./openapi/api.yaml
+
 //go:embed console/.output/public/*
 var staticFiles embed.FS
 
