@@ -8,15 +8,6 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type IdpName string
-
-const (
-	keycloak IdpName = "keycloak"
-)
-
-func (i IdpName) String() string {
-	return string(i)
-}
 
 type Config struct {
 	IdpConfig    IdpConfig
@@ -37,7 +28,7 @@ type LoggerConfig struct {
 }
 
 type IdpConfig struct {
-	IdpName   IdpName `env:"WARG_IDPCONFIG_IDP_NAME" envDefault:"keycloak"`
+	IdpName   string `env:"WARG_IDPCONFIG_IDP_NAME" envDefault:"keycloak"`
 	Url       string  `env:"WARG_IDPCONFIG_IDP_URL" envDefault:"http://localhost:8080"`
 	RealmName string  `env:"WARG_IDPCONFIG_IDP_REALM_NAME" envDefault:"warg"`
 }

@@ -33,5 +33,5 @@ func (i *idpVerifier) Create() error {
 }
 
 func (i *idpVerifier) Name() string {
-	return i.idpConfig.IdpName.String()
+	return i.idpConfig.IdpName
 }
