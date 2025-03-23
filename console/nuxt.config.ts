@@ -13,8 +13,23 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxt/scripts',
     '@nuxt/test-utils',
-    'nuxt-quasar-ui'
+    'nuxt-quasar-ui',
+    'nuxt-oidc-auth'
   ],
+  oidc: {
+    defaultProvider: 'keycloak',
+    providers: {
+      keycloak: {
+        audience: 'account',
+        baseUrl: '',
+        clientId: '',
+        clientSecret: '',
+        redirectUri: 'http://localhost:3000/auth/keycloak/callback',
+        userNameClaim: 'preferred_username',
+        logoutRedirectUri: 'http://localhost:3000',  // Target of your post logout redirection
+      },
+    },
+  },
   quasar: {
     plugins: ['Dark','Dialog', 'Notify'],
     sassVariables: true,
