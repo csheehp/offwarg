@@ -28,15 +28,23 @@
           @click="emitterRegister"
           >Register</q-btn
         >
-        <q-btn no-caps :disable="isDisable" padding="xs lg" color="primary"
+        <q-btn
+          no-caps
+          padding="xs lg"
+          color="primary"
+          @click="login(`keycloak`)"
           >Next</q-btn
         >
       </q-card-actions>
     </q-card>
   </div>
 </template>
+
 <script lang="ts" setup>
-  import { ref, watch, defineEmits} from "vue";
+  import { ref, watch, defineEmits } from "vue";
+  const { login, currentProvider } = useOidcAuth();
+  // const { providers } = useProviders(currentProvider.value as string);
+  // console.log("provider is " + providers.value.map((p) => p.name));
   const mail = ref("");
   const isDisable = ref(true);
 
@@ -46,7 +54,6 @@
   const emit = defineEmits(["register"]);
 
   function emitterRegister() {
-    console.log("emitterRegister");
     emit("register", true);
   }
 </script>

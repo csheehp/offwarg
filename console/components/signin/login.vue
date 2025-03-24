@@ -9,7 +9,6 @@
   import { ref } from "vue";
   const showPrompt = ref(false);
   function is_register(is_register: boolean) {
-    console.log(is_register);
     showPrompt.value = is_register;
   }
 </script>
