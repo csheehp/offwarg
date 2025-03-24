@@ -24,11 +24,15 @@ export default defineNuxtConfig({
         baseUrl: '',
         clientId: '',
         clientSecret: '',
-        redirectUri: 'http://localhost:3000/auth/keycloak/callback',
+        redirectUri: 'http://localhost:9999/auth/keycloak/callback',
         userNameClaim: 'preferred_username',
-        logoutRedirectUri: 'http://localhost:3000',  // Target of your post logout redirection
+        logoutRedirectUri: 'http://localhost:9999/',  // Target of your post logout redirection
       },
     },
+    middleware:{
+      globalMiddlewareEnabled: true,
+      customLoginPage: true,
+    }
   },
   quasar: {
     plugins: ['Dark','Dialog', 'Notify'],
