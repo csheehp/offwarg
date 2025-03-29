@@ -4,7 +4,7 @@ import (
 	"embed"
 
 	"github.com/neel4os/warg/cmd"
-	"github.com/neel4os/warg/internal/util"
+	"github.com/neel4os/warg/internal/common/util"
 	"github.com/spf13/cobra"
 )
 

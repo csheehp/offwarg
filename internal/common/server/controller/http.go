@@ -8,9 +8,9 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/neel4os/warg/internal/config"
-	"github.com/neel4os/warg/internal/handler"
-	"github.com/neel4os/warg/internal/util"
+	"github.com/neel4os/warg/internal/common/config"
+	"github.com/neel4os/warg/internal/common/server/handler"
+	"github.com/neel4os/warg/internal/common/util"
 	"github.com/neel4os/warg/pkg"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"

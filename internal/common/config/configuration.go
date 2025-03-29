@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/caarlos0/env/v11"
-	"github.com/neel4os/warg/internal/logging"
+	"github.com/neel4os/warg/internal/common/logging"
 	"github.com/rs/zerolog/log"
 )
 

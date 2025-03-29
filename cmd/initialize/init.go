@@ -1,7 +1,7 @@
 package initialize
 
 import (
-	"github.com/neel4os/warg/internal/config"
+	"github.com/neel4os/warg/internal/common/config"
 	"github.com/rs/zerolog/log"
 )
 
@@ -10,8 +10,6 @@ type verifier interface {
 	Create() error
 	Name() string
 }
-
-
 
 type wargInitialization struct {
 	verifiers []verifier

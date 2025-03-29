@@ -1,8 +1,8 @@
 package initialize
 
 import (
-	"github.com/neel4os/warg/internal/config"
-	"github.com/neel4os/warg/internal/util"
+	"github.com/neel4os/warg/internal/common/config"
+	"github.com/neel4os/warg/internal/common/util"
 	"github.com/rs/zerolog/log"
 )
 

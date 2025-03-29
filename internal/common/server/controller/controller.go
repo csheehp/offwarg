@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"github.com/neel4os/warg/internal/config"
+	"github.com/neel4os/warg/internal/common/config"
 	"github.com/rs/zerolog/log"
 )
 
