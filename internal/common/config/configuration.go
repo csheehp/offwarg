@@ -13,6 +13,26 @@ type Config struct {
 	IdpConfig    IdpConfig
 	LoggerConfig LoggerConfig
 	ServerConfig ServerConfig
+	DbConfig     DbConfig
+}
+
+type DbConfig struct {
+	Port     string `env:"WARG_DBCONFIG_PORT" envDefault:"5433"`
+	Host     string `env:"WARG_DBCONFIG_HOST" envDefault:"localhost"`
+	User     string `env:"WARG_DBCONFIG_USER" envDefault:"postgres"`
+	Password string `env:"WARG_DBCONFIG_PASSWORD" envDefault:"postgres123"`
+	DbName   string `env:"WARG_DBCONFIG_DBNAME" envDefault:"warg"`
+	SslMode  string `env:"WARG_DBCONFIG_SSLMODE" envDefault:"disable"`
+}
+
+func (dbConfig *DbConfig) GetDbDsn() string {
+	return "postgres://" +
+		dbConfig.User + ":" +
+		dbConfig.Password + "@" +
+		dbConfig.Host + ":" +
+		dbConfig.Port + "/" +
+		dbConfig.DbName + "?sslmode=" +
+		dbConfig.SslMode
 }
 
 type ServerConfig struct {
@@ -29,8 +49,8 @@ type LoggerConfig struct {
 
 type IdpConfig struct {
 	IdpName   string `env:"WARG_IDPCONFIG_IDP_NAME" envDefault:"keycloak"`
-	Url       string  `env:"WARG_IDPCONFIG_IDP_URL" envDefault:"http://localhost:8080"`
-	RealmName string  `env:"WARG_IDPCONFIG_IDP_REALM_NAME" envDefault:"warg"`
+	Url       string `env:"WARG_IDPCONFIG_IDP_URL" envDefault:"http://localhost:8080"`
+	RealmName string `env:"WARG_IDPCONFIG_IDP_REALM_NAME" envDefault:"warg"`
 }
 
 func New() *Config {

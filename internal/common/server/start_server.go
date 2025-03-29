@@ -7,10 +7,13 @@ import (
 
 	"github.com/neel4os/warg/internal/common/config"
 	"github.com/neel4os/warg/internal/common/server/controller"
+	"github.com/neel4os/warg/migration"
 	"github.com/rs/zerolog/log"
 )
 
 func StartServer(cfg *config.Config) {
+	// first we should do migration
+	migration.DoMigration(cfg)
 	ctrlr := controller.NewController(cfg)
 	exit := make(chan os.Signal, 1)
 	signal.Notify(exit, os.Interrupt, syscall.SIGTERM, syscall.SIGINT, syscall.SIGABRT)

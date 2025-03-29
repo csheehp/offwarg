@@ -35,8 +35,88 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorModel"
+  /onboard:
+    post:
+      tags:
+        - Accounts
+      operationId: onboardAccount
+      summary: Onboard an account
+      description: >
+        This endpoint aims to onboard a new account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OnboardingRequest"
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OnboardingResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+        "default":
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
 components:
   schemas:
+    OnboardingResponse:
+      type: object
+      required:
+        - onboarding_id
+      properties:
+        onboarding_id:
+          type: string
+          description: The status of the onboarding request
+          uuid: true
+          example: "123e4567-e89b-12d3-a456-426614174000"
+
+    OnboardingRequest:
+      type: object
+      required:
+        - account_name
+        - first_name
+        - last_name
+        - email
+      properties:
+        account_name:
+          type: string
+          description: The name of the account to be onboarded
+          example: "Acme"
+        first_name:
+          type: string
+          description: The first name of the user
+          example: "John"
+        last_name:
+          type: string
+          description: The last name of the user
+          example: "Doe"
+        email:
+          type: string
+          description: The email address of the user
+          example: "johndoe@acme.com"
     ErrorModel:
       type: object
       required:

@@ -34,11 +34,38 @@ type Health struct {
 // HealthStatus The status of the API
 type HealthStatus string
 
+// OnboardingRequest defines model for OnboardingRequest.
+type OnboardingRequest struct {
+	// AccountName The name of the account to be onboarded
+	AccountName string `json:"account_name"`
+
+	// Email The email address of the user
+	Email string `json:"email"`
+
+	// FirstName The first name of the user
+	FirstName string `json:"first_name"`
+
+	// LastName The last name of the user
+	LastName string `json:"last_name"`
+}
+
+// OnboardingResponse defines model for OnboardingResponse.
+type OnboardingResponse struct {
+	// OnboardingId The status of the onboarding request
+	OnboardingId string `json:"onboarding_id"`
+}
+
+// OnboardAccountJSONRequestBody defines body for OnboardAccount for application/json ContentType.
+type OnboardAccountJSONRequestBody = OnboardingRequest
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// Health check endpoint
 	// (GET /health)
 	CheckHealth(ctx echo.Context) error
+	// Onboard an account
+	// (POST /onboard)
+	OnboardAccount(ctx echo.Context) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -52,6 +79,15 @@ func (w *ServerInterfaceWrapper) CheckHealth(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.CheckHealth(ctx)
+	return err
+}
+
+// OnboardAccount converts echo context to params.
+func (w *ServerInterfaceWrapper) OnboardAccount(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.OnboardAccount(ctx)
 	return err
 }
 
@@ -84,5 +120,6 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	}
 
 	router.GET(baseURL+"/health", wrapper.CheckHealth)
+	router.POST(baseURL+"/onboard", wrapper.OnboardAccount)
 
 }
