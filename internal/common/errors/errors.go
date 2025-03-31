@@ -48,3 +48,11 @@ func NewBadRequestError(message string) *wargError {
 		DetailedMessage: message,
 	}
 }
+
+func NewInternalServerError(message string) *wargError {
+	return &wargError{
+		ErrorCode:       "WARG-500-001",
+		Message:         "internal server error",
+		DetailedMessage: message,
+	}
+}
