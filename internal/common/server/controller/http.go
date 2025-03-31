@@ -61,6 +61,7 @@ func (h *httpComponent) Stop() {
 func (h *httpComponent) customize() {
 	h.e.HideBanner = false
 	h.e.HidePort = h.cfg.ServerConfig.HidePortInStdOut
+	h.e.Validator = &CustomValidator{}
 	// logger middleware
 	logger := zerolog.New(os.Stdout)
 	h.e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{

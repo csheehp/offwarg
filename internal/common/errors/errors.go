@@ -8,6 +8,7 @@ const (
 	// ErrorCodeBindError is the error code for binding errors.
 	ErrorCodeBindError    errorCode = "WARG-400-001"
 	ErrorJSONMarshalError errorCode = "WARG-400-002"
+	ErrorCodeBadRequest   errorCode = "WARG-400-003"
 )
 
 type wargError struct {
@@ -34,8 +35,16 @@ func newJSONMarhsalError(message string) *wargError {
 
 func NewBindError(message string) *wargError {
 	return &wargError{
-		ErrorCode:       "bind_error",
+		ErrorCode:       ErrorCodeBindError,
 		Message:         "failed to bind request body",
+		DetailedMessage: message,
+	}
+}
+
+func NewBadRequestError(message string) *wargError {
+	return &wargError{
+		ErrorCode:       ErrorCodeBadRequest,
+		Message:         "bad request",
 		DetailedMessage: message,
 	}
 }

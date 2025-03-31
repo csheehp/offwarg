@@ -42,21 +42,21 @@ func (s AccountStatus) String() string {
 
 type Account struct {
 	ID        uuid.UUID     `json:"id"`
-	CreatedAt time.Time     `json:"created_at"`
 	UpdatedAt time.Time     `json:"updated_at"`
 	Name      string        `json:"name"`
-	FisrtName string        `json:"first_name"`
-	LastName  string        `json:"last_name"`
-	Email     string        `json:"email"`
 	Status    AccountStatus `json:"status"`
 }
 
 func NewAccount(name, firstName, lastName, email string) *Account {
 	return &Account{
-		Name:      name,
-		FisrtName: firstName,
-		LastName:  lastName,
-		Email:     email,
-		Status:    AccountStatusPending,
+		Name:   name,
+		Status: AccountStatusPending,
 	}
+}
+
+type AccountCreationRequest struct {
+	AccountName string `json:"account_name" valid:"alphanum,required~account_name required and must be alphanumeric"`
+	FirstName   string `json:"first_name" valid:"alpha,required~first_name required and must be alphabetic"`
+	LastName    string `json:"last_name" valid:"alpha,required~last_name required and must be alphabetic"`
+	Email       string `json:"email" valid:"email,required~email required and must be a valid email address"`
 }
