@@ -10,6 +10,6 @@ func NewAccountApplication() *app.Application {
 		Commands: app.Commands{
 			AccountOnboardCommand: commands.NewAccountOnboardCommand(),
 		},
-		Queries:  app.Queries{},
+		Queries: app.Queries{},
 	}
 }

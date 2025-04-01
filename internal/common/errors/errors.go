@@ -20,12 +20,12 @@ type wargError struct {
 func (e *wargError) Error() string {
 	res, err := json.MarshalIndent(e, "", "4")
 	if err != nil {
-		return newJSONMarhsalError(err.Error()).Error()
+		return NewJSONMarhsalError(err.Error()).Error()
 	}
 	return string(res)
 }
 
-func newJSONMarhsalError(message string) *wargError {
+func NewJSONMarhsalError(message string) *wargError {
 	return &wargError{
 		ErrorCode:       ErrorJSONMarshalError,
 		Message:         "unable to marhsall output",
