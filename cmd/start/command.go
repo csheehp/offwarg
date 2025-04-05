@@ -18,7 +18,7 @@ func New() *cobra.Command {
 func StartWarg(cmd *cobra.Command, args []string) error {
 	log.Info().Caller().Msg("Starting Warg instance")
 	log.Info().Caller().Msg("Reading Warg configuration")
-	config := config.New()
+	config := config.GetConfig()
 	log.Debug().Interface("config", config).Caller().Msg("Configuration loaded")
 	log.Debug().Caller().Msg("Starting warg")
 	starter := NewStarter(config)

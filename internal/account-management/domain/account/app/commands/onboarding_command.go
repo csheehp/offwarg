@@ -8,14 +8,11 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 
-	//"github.com/neel4os/warg/internal/account-management/domain/account/aggregates/value"
-	//"github.com/neel4os/warg/internal/account-management/domain/account/aggregates"
 	"github.com/neel4os/warg/internal/account-management/domain/account/aggregates/value"
-	//"github.com/neel4os/warg/internal/account-management/domain/account/app/events"
-	account_repository "github.com/neel4os/warg/internal/account-management/domain/account/repositories"
-	account_persistence "github.com/neel4os/warg/internal/account-management/persistence/account"
+	"github.com/neel4os/warg/internal/account-management/domain/account/app/events"
 
-	//"github.com/neel4os/warg/internal/common/database"
+	"github.com/neel4os/warg/internal/common/config"
+	"github.com/neel4os/warg/internal/common/database"
 	"github.com/neel4os/warg/internal/common/errors"
 	"github.com/neel4os/warg/internal/eventstore/domain/aggregates"
 	"github.com/neel4os/warg/internal/eventstore/domain/app"
@@ -34,19 +31,21 @@ type OnBoardAccount struct {
 }
 
 type AccountOnboardingCommandHandler struct {
-	accountRepo account_repository.AccountRepositoryInterface
-	eventRepo   domain_repository.EventRepositories
-	eventBus    *cqrs.EventBus
+	// accountRepo account_repository.AccountRepositoryInterface
+	eventRepo domain_repository.EventRepositories
+	eventBus  *cqrs.EventBus
 }
 
 func NewAccountOnboardCommandHandler() *AccountOnboardingCommandHandler {
-	accountRepo := account_persistence.NewAccountDatabaseRepository()
-	eventRepo := event_persistence.NewEventDatabaseRepository()
+	_config := config.GetConfig()
+	dbcon := database.GetDataConn(*_config)
+	// accountRepo := account_persistence.NewAccountDatabaseRepository()
+	eventRepo := event_persistence.NewEventDatabaseRepository(dbcon)
 	eventPlatform := app.GetEventPlatform()
 	return &AccountOnboardingCommandHandler{
-		accountRepo: accountRepo,
-		eventRepo:   eventRepo,
-		eventBus:    eventPlatform.EventBus,
+		// accountRepo: accountRepo,
+		eventRepo: eventRepo,
+		eventBus:  eventPlatform.EventBus,
 	}
 }
 
@@ -60,7 +59,7 @@ func (h *AccountOnboardingCommandHandler) Handle(ctx context.Context, cmd *OnBoa
 	// create event
 	_event := aggregates.NewEvent(
 		accountStream.StreamID(),
-		accountStream.StreamName() + "." + _account_ID.String(),
+		accountStream.StreamName()+"."+_account_ID.String(),
 	)
 	_req_bytes, err := json.Marshal(cmd)
 	if err != nil {
@@ -73,10 +72,25 @@ func (h *AccountOnboardingCommandHandler) Handle(ctx context.Context, cmd *OnBoa
 		SetEventData(datatypes.JSON(_req_bytes)).
 		SetEventType("account_onboarded")
 	// Now lets get the database connection
-	//dbcon := database.GetDataConn()
-	// err = h.eventRepo.CreateEvent(_event)
-	// if err != nil {
-	// 	return err
-	// }
+
+	tx, err := h.eventRepo.CreateEvent(_event)
+	if err != nil {
+		return errors.NewDatabaseOperationError("failed to create event")
+	}
+	// Now publish the event
+	err = h.eventBus.Publish(ctx, &events.AccountOnboarded{
+		AccountId:   _account_ID,
+		AccountName: cmd.AccountName,
+		FirstName:   cmd.FirstName,
+		LastName:    cmd.LastName,
+		Email:       cmd.Email,
+		Status:      value.AccountStatusPending,
+	})
+	if err != nil {
+		tx.Rollback()
+		return errors.NewInternalServerError("failed to publish event")
+	}
+	// if everything is ok, commit the transaction
+	tx.Commit()
 	return nil
 }

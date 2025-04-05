@@ -6,9 +6,10 @@ type errorCode string
 
 const (
 	// ErrorCodeBindError is the error code for binding errors.
-	ErrorCodeBindError    errorCode = "WARG-400-001"
-	ErrorJSONMarshalError errorCode = "WARG-400-002"
-	ErrorCodeBadRequest   errorCode = "WARG-400-003"
+	ErrorCodeBindError     errorCode = "WARG-400-001"
+	ErrorJSONMarshalError  errorCode = "WARG-400-002"
+	ErrorCodeBadRequest    errorCode = "WARG-400-003"
+	ErrorDatabaseOperation errorCode = "WARG-500-001"
 )
 
 type wargError struct {
@@ -53,6 +54,14 @@ func NewInternalServerError(message string) *wargError {
 	return &wargError{
 		ErrorCode:       "WARG-500-001",
 		Message:         "internal server error",
+		DetailedMessage: message,
+	}
+}
+
+func NewDatabaseOperationError(message string) *wargError {
+	return &wargError{
+		ErrorCode:       ErrorDatabaseOperation,
+		Message:         "database operation error",
 		DetailedMessage: message,
 	}
 }

@@ -2,12 +2,17 @@ package config
 
 import (
 	"os"
+	"sync"
 
 	"github.com/caarlos0/env/v11"
 	"github.com/neel4os/warg/internal/common/logging"
 	"github.com/rs/zerolog/log"
 )
 
+var (
+	instance *Config
+	once     sync.Once
+)
 
 type Config struct {
 	IdpConfig    IdpConfig
@@ -53,7 +58,7 @@ type IdpConfig struct {
 	RealmName string `env:"WARG_IDPCONFIG_IDP_REALM_NAME" envDefault:"warg"`
 }
 
-func New() *Config {
+func new() *Config {
 	var cfg Config
 	if err := env.Parse(&cfg); err != nil {
 		log.Error().Err(err).Caller().Msg("failed to parse environment variables")
@@ -65,4 +70,12 @@ func New() *Config {
 		logging.SetLogConfig(false)
 	}
 	return &cfg
+}
+
+func GetConfig() *Config {
+	once.Do(func() {
+		instance = new()
+	})
+
+	return instance
 }
