@@ -8,7 +8,7 @@ import (
 func NewAccountApplication() *app.Application {
 	return &app.Application{
 		Commands: app.Commands{
-			AccountOnboardCommand: commands.NewAccountOnboardCommand(),
+			AccountOnboardCommand: commands.NewAccountOnboardCommandHandler(),
 		},
 		Queries: app.Queries{},
 	}

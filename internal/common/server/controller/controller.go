@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/neel4os/warg/internal/common/config"
+	"github.com/neel4os/warg/internal/eventstore/domain/app"
 	"github.com/rs/zerolog/log"
 )
 
@@ -13,6 +14,7 @@ type controller struct {
 func NewController(cfg *config.Config) *controller {
 	_components := make([]componentable, 0)
 	_components = append(_components, NewHTTPComponent(cfg))
+	_components = append(_components, app.GetEventPlatform())
 	return &controller{components: _components, cfg: cfg}
 }
 

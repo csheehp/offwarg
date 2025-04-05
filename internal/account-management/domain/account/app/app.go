@@ -7,7 +7,7 @@ type Application struct {
 	Queries  Queries
 }
 
-type Commands struct{
-	AccountOnboardCommand *commands.AccountOnboardingCommand
+type Commands struct {
+	AccountOnboardCommand *commands.AccountOnboardingCommandHandler
 }
 type Queries struct{}
