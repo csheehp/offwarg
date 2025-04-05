@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/neel4os/warg/internal/account-management/domain/account/service"
 	"github.com/neel4os/warg/internal/common/config"
 	"github.com/neel4os/warg/internal/eventstore/domain/app"
 	"github.com/rs/zerolog/log"
@@ -8,13 +9,13 @@ import (
 
 type controller struct {
 	components []componentable
-	cfg *config.Config
+	cfg        *config.Config
 }
 
 func NewController(cfg *config.Config) *controller {
 	_components := make([]componentable, 0)
-	_components = append(_components, NewHTTPComponent(cfg))
 	_components = append(_components, app.GetEventPlatform())
+	_components = append(_components, NewHTTPComponent(cfg))
 	return &controller{components: _components, cfg: cfg}
 }
 
@@ -23,6 +24,8 @@ func (c *controller) Init() {
 		log.Debug().Str("component", comp.Name()).Caller().Msg("Initializing " + comp.Name())
 		comp.Init()
 	}
+	// Here we add all the command handlers to the event platform
+	service.RegisterCommandHandlers(app.GetEventPlatform())
 }
 
 func (c *controller) Run() {
@@ -32,7 +35,7 @@ func (c *controller) Run() {
 	}
 }
 
-func (c *controller) Stop(){
+func (c *controller) Stop() {
 	for _, comp := range c.components {
 		log.Debug().Str("component", comp.Name()).Caller().Msg("Stopping " + comp.Name())
 		comp.Stop()

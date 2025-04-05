@@ -5,6 +5,7 @@ import (
 	//"encoding/json"
 
 	"github.com/ThreeDotsLabs/watermill/components/cqrs"
+	"github.com/rs/zerolog/log"
 	//"github.com/neel4os/warg/internal/account-management/domain/account/aggregates/value"
 	"github.com/neel4os/warg/internal/account-management/domain/account/app/events"
 	account_repository "github.com/neel4os/warg/internal/account-management/domain/account/repositories"
@@ -21,10 +22,10 @@ import (
 // type AccountOnboardHandler decorators.CommandHandler[value.AccountCreationRequest]
 
 type OnBoardAccount struct {
-	AccountName string
-	FirstName   string
-	LastName    string
-	Email       string
+	AccountName string `json:"account_name" valid:"alphanum,required~account_name required and must be alphanumeric"`
+	FirstName   string `json:"first_name" valid:"alpha,required~first_name required and must be alphabetic"`
+	LastName    string `json:"last_name" valid:"alpha,required~last_name required and must be alphabetic"`
+	Email       string `json:"email" valid:"email,required~email required and must be a valid email address"`
 }
 
 type AccountOnboardingCommandHandler struct {
@@ -45,6 +46,7 @@ func NewAccountOnboardCommandHandler() *AccountOnboardingCommandHandler {
 }
 
 func (h *AccountOnboardingCommandHandler) Handle(ctx context.Context, cmd *OnBoardAccount) error {
+	log.Info().Caller().Interface("Handling command", &cmd).Msg("")
 	return h.eventBus.Publish(ctx, &events.AccountOnboarded{})
 	// // get stream info of account stream
 	// accountStream := value.GetAccountStream()

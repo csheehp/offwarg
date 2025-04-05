@@ -10,7 +10,8 @@ import (
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/ThreeDotsLabs/watermill/message/router/middleware"
 	"github.com/ThreeDotsLabs/watermill/pubsub/gochannel"
-	"github.com/neel4os/warg/internal/account-management/domain/account/app/commands"
+	"github.com/rs/zerolog/log"
+	//"github.com/neel4os/warg/internal/account-management/domain/account/app/commands"
 )
 
 type EventPlatform struct {
@@ -24,7 +25,8 @@ type EventPlatform struct {
 }
 
 func newEventPlatform() *EventPlatform {
-	logger := watermill.NewStdLogger(false, false)
+	log.Info().Str("component", "eventstore").Msg("+++++++++++++Initializing event platform++++++++++++++++")
+	logger := watermill.NewStdLogger(true, true)
 	cqrsMarshaler := cqrs.JSONMarshaler{
 		GenerateName: cqrs.StructName,
 	}
@@ -37,13 +39,15 @@ func newEventPlatform() *EventPlatform {
 	router.AddMiddleware(middleware.Recoverer)
 	commandBus, err := cqrs.NewCommandBusWithConfig(pubsub, cqrs.CommandBusConfig{
 		GeneratePublishTopic: func(cbgptp cqrs.CommandBusGeneratePublishTopicParams) (string, error) {
+			
 			return "commands." + cbgptp.CommandName, nil
 		},
 		OnSend: func(params cqrs.CommandBusOnSendParams) error {
-			logger.Info("Sending command", watermill.LogFields{
+			logger.Info("Sending command in router code", watermill.LogFields{
 				"command": params.CommandName,
 			})
 			params.Message.Metadata.Set("sent_at", time.Now().Format(time.RFC3339))
+			log.Info().Interface("params", params).Msg("Sending command in router code")
 			return nil
 		},
 		Marshaler: cqrsMarshaler,
@@ -55,7 +59,7 @@ func newEventPlatform() *EventPlatform {
 	}
 	commandProcessor, err := cqrs.NewCommandProcessorWithConfig(router, cqrs.CommandProcessorConfig{
 		GenerateSubscribeTopic: func(cpgstp cqrs.CommandProcessorGenerateSubscribeTopicParams) (string, error) {
-			return "events." + cpgstp.CommandName, nil
+			return "commands." + cpgstp.CommandName, nil
 		},
 		SubscriberConstructor: func(cpscp cqrs.CommandProcessorSubscriberConstructorParams) (message.Subscriber, error) {
 			return pubsub, nil
@@ -137,7 +141,6 @@ func (ep *EventPlatform) Name() string {
 }
 
 func (ep *EventPlatform) Init() {
-	ep.AddCommandProcessorHandler(cqrs.NewCommandHandler("AccountOnboarded", commands.NewAccountOnboardCommandHandler().Handle))
 }
 
 func (ep *EventPlatform) Run() {
