@@ -2,21 +2,26 @@ package commands
 
 import (
 	"context"
-	//"encoding/json"
+	"encoding/json"
 
 	"github.com/ThreeDotsLabs/watermill/components/cqrs"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+
 	//"github.com/neel4os/warg/internal/account-management/domain/account/aggregates/value"
-	"github.com/neel4os/warg/internal/account-management/domain/account/app/events"
+	//"github.com/neel4os/warg/internal/account-management/domain/account/aggregates"
+	"github.com/neel4os/warg/internal/account-management/domain/account/aggregates/value"
+	//"github.com/neel4os/warg/internal/account-management/domain/account/app/events"
 	account_repository "github.com/neel4os/warg/internal/account-management/domain/account/repositories"
 	account_persistence "github.com/neel4os/warg/internal/account-management/persistence/account"
 
-	//"github.com/neel4os/warg/internal/common/errors"
-	//"github.com/neel4os/warg/internal/eventstore/domain/aggregates"
+	//"github.com/neel4os/warg/internal/common/database"
+	"github.com/neel4os/warg/internal/common/errors"
+	"github.com/neel4os/warg/internal/eventstore/domain/aggregates"
 	"github.com/neel4os/warg/internal/eventstore/domain/app"
 	domain_repository "github.com/neel4os/warg/internal/eventstore/domain/repositories"
 	event_persistence "github.com/neel4os/warg/internal/eventstore/persistence"
-	//"gorm.io/datatypes"
+	"gorm.io/datatypes"
 )
 
 // type AccountOnboardHandler decorators.CommandHandler[value.AccountCreationRequest]
@@ -46,26 +51,32 @@ func NewAccountOnboardCommandHandler() *AccountOnboardingCommandHandler {
 }
 
 func (h *AccountOnboardingCommandHandler) Handle(ctx context.Context, cmd *OnBoardAccount) error {
-	log.Info().Caller().Interface("Handling command", &cmd).Msg("")
-	return h.eventBus.Publish(ctx, &events.AccountOnboarded{})
-	// // get stream info of account stream
-	// accountStream := value.GetAccountStream()
-	// // create event
-	// _event := aggregates.NewEvent(
-	// 	accountStream.StreamID(),
-	// 	accountStream.StreamName(),
-	// )
-	// _req_bytes, err := json.Marshal(req)
-	// if err != nil {
-	// 	return errors.NewJSONMarhsalError(err.Error())
-	// }
-	// _event = _event.SetInitiatorType("user").
-	// 	SetInitiatorName(req.Email).
-	// 	SetEventData(datatypes.JSON{}).
-	// 	SetEventData(datatypes.JSON(_req_bytes))
+	log.Debug().Caller().Interface("Handling command", &cmd).Msg("")
+	// return h.eventBus.Publish(ctx, &events.AccountOnboarded{})
+	// create account ID
+	_account_ID := uuid.New()
+	// get stream info of account stream
+	accountStream := value.GetAccountStream()
+	// create event
+	_event := aggregates.NewEvent(
+		accountStream.StreamID(),
+		accountStream.StreamName() + "." + _account_ID.String(),
+	)
+	_req_bytes, err := json.Marshal(cmd)
+	if err != nil {
+		return errors.NewJSONMarhsalError(err.Error())
+	}
+	// make event more informative
+	_event = _event.SetInitiatorType("user").
+		SetInitiatorName(cmd.Email).
+		SetMetadata(datatypes.JSON{}).
+		SetEventData(datatypes.JSON(_req_bytes)).
+		SetEventType("account_onboarded")
+	// Now lets get the database connection
+	//dbcon := database.GetDataConn()
 	// err = h.eventRepo.CreateEvent(_event)
 	// if err != nil {
 	// 	return err
 	// }
-	// return nil
+	return nil
 }

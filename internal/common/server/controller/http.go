@@ -9,6 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/neel4os/warg/internal/common/config"
+	"github.com/neel4os/warg/internal/common/database"
 	"github.com/neel4os/warg/internal/common/server/handler"
 	"github.com/neel4os/warg/internal/common/util"
 	"github.com/neel4os/warg/pkg"
@@ -19,10 +20,11 @@ import (
 type httpComponent struct {
 	e   *echo.Echo
 	cfg *config.Config
+	dbcon *database.DataConn
 }
 
-func NewHTTPComponent(cfg *config.Config) *httpComponent {
-	return &httpComponent{cfg: cfg}
+func NewHTTPComponent(cfg *config.Config, dbcon *database.DataConn) *httpComponent {
+	return &httpComponent{cfg: cfg, dbcon: dbcon}
 }
 
 func (h *httpComponent) Name() string {
@@ -34,7 +36,7 @@ func (h *httpComponent) Init() {
 	st := util.NewStaticFileLocation(nil)
 	h.e.StaticFS("/", echo.MustSubFS(st.GetStaticFiles(), "console/.output/public"))
 	h.customize()
-	handler := handler.NewHandler()
+	handler := handler.NewHandler(h.cfg, h.dbcon)
 	pkg.RegisterHandlers(h.e, handler)
 }
 

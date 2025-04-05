@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/neel4os/warg/internal/account-management/domain/account/service"
 	"github.com/neel4os/warg/internal/common/config"
+	"github.com/neel4os/warg/internal/common/database"
 	"github.com/neel4os/warg/internal/eventstore/domain/app"
 	"github.com/rs/zerolog/log"
 )
@@ -12,10 +13,10 @@ type controller struct {
 	cfg        *config.Config
 }
 
-func NewController(cfg *config.Config) *controller {
+func NewController(cfg *config.Config, dbcon *database.DataConn) *controller {
 	_components := make([]componentable, 0)
 	_components = append(_components, app.GetEventPlatform())
-	_components = append(_components, NewHTTPComponent(cfg))
+	_components = append(_components, NewHTTPComponent(cfg, dbcon))
 	return &controller{components: _components, cfg: cfg}
 }
 

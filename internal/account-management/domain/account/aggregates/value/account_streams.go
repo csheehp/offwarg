@@ -20,7 +20,7 @@ func GetAccountStream() *accountStream {
 	once.Do(func() {
 		instance = &accountStream{
 			streamID:   uuid.New(),
-			streamName: "AccountStream",
+			streamName: "account",
 		}
 	})
 	return instance

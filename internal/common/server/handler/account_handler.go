@@ -22,8 +22,6 @@ func (h *Handler) OnboardAccount(c echo.Context) error {
 	}
 	ep := app.GetEventPlatform()
 	err := ep.CommandBus.Send(context.Background(), _account)
-	// _accountManagementService := service.NewAccountApplication()
-	// err := _accountManagementService.Commands.AccountOnboardCommand.Handle(context.Background(), _account)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, errors.NewInternalServerError(err.Error()))
 	}
