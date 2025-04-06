@@ -10,6 +10,7 @@ import (
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/ThreeDotsLabs/watermill/message/router/middleware"
 	"github.com/ThreeDotsLabs/watermill/pubsub/gochannel"
+	"github.com/neel4os/warg/internal/eventstore/logs"
 	"github.com/rs/zerolog/log"
 	//"github.com/neel4os/warg/internal/account-management/domain/account/app/commands"
 )
@@ -25,8 +26,7 @@ type EventPlatform struct {
 }
 
 func newEventPlatform() *EventPlatform {
-	log.Info().Str("component", "eventstore").Msg("+++++++++++++Initializing event platform++++++++++++++++")
-	logger := watermill.NewStdLogger(true, true)
+	logger := logs.NewZerologLoggerAdapter(log.Logger.With().Str("component", "event-platform").Logger())
 	cqrsMarshaler := cqrs.JSONMarshaler{
 		GenerateName: cqrs.StructName,
 	}
@@ -39,7 +39,6 @@ func newEventPlatform() *EventPlatform {
 	router.AddMiddleware(middleware.Recoverer)
 	commandBus, err := cqrs.NewCommandBusWithConfig(pubsub, cqrs.CommandBusConfig{
 		GeneratePublishTopic: func(cbgptp cqrs.CommandBusGeneratePublishTopicParams) (string, error) {
-			
 			return "commands." + cbgptp.CommandName, nil
 		},
 		OnSend: func(params cqrs.CommandBusOnSendParams) error {
