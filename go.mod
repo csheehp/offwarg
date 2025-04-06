@@ -6,7 +6,6 @@ toolchain go1.23.7
 
 require (
 	github.com/cucumber/godog v0.15.0
-	github.com/docker/distribution v2.8.3+incompatible
 	github.com/spf13/cobra v1.9.1
 	gorm.io/driver/postgres v1.5.0
 	gorm.io/gorm v1.25.11
@@ -48,7 +47,6 @@ require (
 	github.com/perimeterx/marshmallow v1.1.5 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sergi/go-diff v1.3.1 // indirect
-	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/sony/gobreaker v1.0.0 // indirect
 	github.com/speakeasy-api/openapi-overlay v0.9.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect

@@ -27,6 +27,7 @@ func (c *controller) Init() {
 	}
 	// Here we add all the command handlers to the event platform
 	service.RegisterCommandHandlers(app.GetEventPlatform())
+	service.RegisterEventHandlers(app.GetEventPlatform())
 }
 
 func (c *controller) Run() {

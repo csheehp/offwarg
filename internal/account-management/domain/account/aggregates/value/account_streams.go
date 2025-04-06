@@ -1,28 +1,19 @@
 package value
 
-import (
-	"sync"
+import "github.com/google/uuid"
 
-	"github.com/google/uuid"
-)
+var accountStreamID = "328ab4ec-b5d6-4650-ada3-18f26e0f5752"
 
 type accountStream struct {
 	streamID   uuid.UUID
 	streamName string
 }
 
-var (
-	instance *accountStream
-	once     sync.Once
-)
-
 func GetAccountStream() *accountStream {
-	once.Do(func() {
-		instance = &accountStream{
-			streamID:   uuid.New(),
-			streamName: "account",
-		}
-	})
+	instance := &accountStream{
+		streamID:   uuid.MustParse(accountStreamID),
+		streamName: "account",
+	}
 	return instance
 }
 

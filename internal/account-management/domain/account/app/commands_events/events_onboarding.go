@@ -1,4 +1,4 @@
-package events
+package commands_events
 
 import (
 	"github.com/google/uuid"
@@ -13,3 +13,5 @@ type AccountOnboarded struct {
 	Email       string
 	Status      value.AccountStatus
 }
+
+
