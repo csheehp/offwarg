@@ -53,9 +53,12 @@ type LoggerConfig struct {
 }
 
 type IdpConfig struct {
-	IdpName   string `env:"WARG_IDPCONFIG_IDP_NAME" envDefault:"keycloak"`
-	Url       string `env:"WARG_IDPCONFIG_IDP_URL" envDefault:"http://localhost:8080"`
-	RealmName string `env:"WARG_IDPCONFIG_IDP_REALM_NAME" envDefault:"warg"`
+	IdpName     string `env:"WARG_IDPCONFIG_IDP_NAME" envDefault:"keycloak"`
+	Url         string `env:"WARG_IDPCONFIG_IDP_URL" envDefault:"http://localhost:8080"`
+	RealmName   string `env:"WARG_IDPCONFIG_IDP_REALM_NAME" envDefault:"warg"`
+	Username    string `env:"WARG_IDPCONFIG_IDP_USERNAME" envDefault:"admin"`
+	Password    string `env:"WARG_IDPCONFIG_IDP_PASSWORD" envDefault:"admin123"`
+	TokenExpiry int    `env:"WARG_IDPCONFIG_TOKEN_EXPIRY" envDefault:"55"`
 }
 
 func new() *Config {

@@ -1,4 +1,4 @@
-package commands_events
+package events
 
 import (
 	"github.com/google/uuid"

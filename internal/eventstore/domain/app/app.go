@@ -10,7 +10,7 @@ import (
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/ThreeDotsLabs/watermill/message/router/middleware"
 	"github.com/ThreeDotsLabs/watermill/pubsub/gochannel"
-	"github.com/neel4os/warg/internal/eventstore/logs"
+	//"github.com/neel4os/warg/internal/eventstore/logs"
 	"github.com/rs/zerolog/log"
 	//"github.com/neel4os/warg/internal/account-management/domain/account/app/commands"
 )
@@ -26,7 +26,8 @@ type EventPlatform struct {
 }
 
 func newEventPlatform() *EventPlatform {
-	logger := logs.NewZerologLoggerAdapter(log.Logger.With().Str("component", "event-platform").Logger())
+	//logger := logs.NewZerologLoggerAdapter(log.Logger.With().Str("component", "event-platform").Logger())
+	logger := watermill.NewStdLogger(true, true)
 	cqrsMarshaler := cqrs.JSONMarshaler{
 		GenerateName: cqrs.StructName,
 	}

@@ -1,6 +1,6 @@
 package app
 
-import "github.com/neel4os/warg/internal/account-management/domain/account/app/commands_events"
+import "github.com/neel4os/warg/internal/account-management/domain/account/app/commands"
 
 type Application struct {
 	Commands Commands
@@ -8,6 +8,6 @@ type Application struct {
 }
 
 type Commands struct {
-	AccountOnboardCommand *commands_events.AccountOnboardingCommandHandler
+	AccountOnboardCommand *commands.AccountOnboardingCommandHandler
 }
 type Queries struct{}

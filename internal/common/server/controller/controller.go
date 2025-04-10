@@ -1,7 +1,9 @@
 package controller
 
 import (
-	"github.com/neel4os/warg/internal/account-management/domain/account/service"
+	account_service "github.com/neel4os/warg/internal/account-management/domain/account/service"
+	organization_service "github.com/neel4os/warg/internal/account-management/domain/organization/service"
+	"github.com/neel4os/warg/internal/common/cache"
 	"github.com/neel4os/warg/internal/common/config"
 	"github.com/neel4os/warg/internal/common/database"
 	"github.com/neel4os/warg/internal/eventstore/domain/app"
@@ -17,6 +19,7 @@ func NewController(cfg *config.Config, dbcon *database.DataConn) *controller {
 	_components := make([]componentable, 0)
 	_components = append(_components, app.GetEventPlatform())
 	_components = append(_components, NewHTTPComponent(cfg, dbcon))
+	_components = append(_components, cache.NewIMCache(cfg))
 	return &controller{components: _components, cfg: cfg}
 }
 
@@ -26,8 +29,9 @@ func (c *controller) Init() {
 		comp.Init()
 	}
 	// Here we add all the command handlers to the event platform
-	service.RegisterCommandHandlers(app.GetEventPlatform())
-	service.RegisterEventHandlers(app.GetEventPlatform())
+	account_service.RegisterCommandHandlers(app.GetEventPlatform())
+	organization_service.RegisterEventHandlers(app.GetEventPlatform())
+	organization_service.RegisterCommandHandlers(app.GetEventPlatform())
 }
 
 func (c *controller) Run() {

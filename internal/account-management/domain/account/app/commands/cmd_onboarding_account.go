@@ -1,4 +1,4 @@
-package commands_events
+package commands
 
 import (
 	"context"
@@ -9,6 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/neel4os/warg/internal/account-management/domain/account/aggregates/value"
+	"github.com/neel4os/warg/internal/account-management/domain/account/app/events"
 
 	"github.com/neel4os/warg/internal/common/config"
 	"github.com/neel4os/warg/internal/common/database"
@@ -85,7 +86,7 @@ func (h *AccountOnboardingCommandHandler) Handle(ctx context.Context, cmd *OnBoa
 		return errors.NewDatabaseOperationError("failed to refresh materialized view")
 	}
 	// Now publish the event
-	err = h.eventBus.Publish(ctx, &AccountOnboarded{
+	err = h.eventBus.Publish(ctx, &events.AccountOnboarded{
 		AccountId:   _account_ID,
 		AccountName: cmd.AccountName,
 		FirstName:   cmd.FirstName,
