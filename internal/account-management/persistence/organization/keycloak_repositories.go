@@ -11,11 +11,11 @@ import (
 	"resty.dev/v3"
 )
 
-type organizationKeycloakRepository struct {
+type OrganizationKeycloakRepository struct {
 	client *resty.Client
 }
 
-func NewOrganizationKeycloakRepository() *organizationKeycloakRepository {
+func NewOrganizationKeycloakRepository() *OrganizationKeycloakRepository {
 	cfg := config.GetConfig()
 	cache := cache.NewIMCache(cfg)
 	token := cache.GetToken()
@@ -25,12 +25,12 @@ func NewOrganizationKeycloakRepository() *organizationKeycloakRepository {
 	restyClient.SetHeader("Accept", "application/json")
 	restyClient.SetRetryCount(3)
 	restyClient.SetBaseURL(cfg.IdpConfig.Url + "/admin/realms/" + cfg.IdpConfig.RealmName)
-	return &organizationKeycloakRepository{
+	return &OrganizationKeycloakRepository{
 		client: restyClient,
 	}
 }
 
-func (r *organizationKeycloakRepository) CreateOrganization(name string) (string, error) {
+func (r *OrganizationKeycloakRepository) CreateOrganization(name string) (string, error) {
 	resp, err := r.client.R().SetBody(keycloak.NewOrganizationRepresentation(name)).Post("/organizations")
 	if err != nil {
 		log.Error().Err(err).Caller().Msg("Error while creating organization")

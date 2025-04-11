@@ -19,8 +19,8 @@ func StartWarg(cmd *cobra.Command, args []string) error {
 	log.Info().Caller().Msg("Starting Warg instance")
 	log.Info().Caller().Msg("Reading Warg configuration")
 	config := config.GetConfig()
-	log.Debug().Interface("config", config).Caller().Msg("Configuration loaded")
-	log.Debug().Caller().Msg("Starting warg")
+	//log.Debug().Interface("config", config).Caller().Msg("Configuration loaded")
+	//log.Debug().Caller().Msg("Starting warg")
 	starter := NewStarter(config)
 	if err := starter.DoStart(); err != nil {
 		log.Fatal().Caller().Err(err).Msg("Failed to start")

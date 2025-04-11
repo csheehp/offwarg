@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/ThreeDotsLabs/watermill/components/cqrs"
-	"github.com/google/uuid"
 
 	//"github.com/neel4os/warg/internal/account-management/domain/account/app/commands_events"
 	"github.com/neel4os/warg/internal/account-management/domain/account/app/events"
@@ -29,8 +28,6 @@ func NewCreateOrgOnAccountCreatedEventHandler() *CreateOrgOnAccountCreatedEventH
 
 func (c *CreateOrgOnAccountCreatedEventHandler) Handle(ctx context.Context, event *events.AccountOnboarded) error {
 	log.Info().Caller().Interface("Handling event CreateOrgOnAccountCreated ", &event).Msg("")
-	org_id := uuid.New()
-	// create org command
 	email := event.Email
 	domain := ""
 	if atIdx := strings.LastIndex(email, "@"); atIdx != -1 {
@@ -38,7 +35,6 @@ func (c *CreateOrgOnAccountCreatedEventHandler) Handle(ctx context.Context, even
 	}
 	createOrgCommand := &commands.CreateOrgCommand{
 		AccountId:  event.AccountId,
-		OrgId:      org_id,
 		OrgName:    event.AccountName,
 		DomainName: domain,
 	}
