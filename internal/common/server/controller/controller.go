@@ -3,6 +3,7 @@ package controller
 import (
 	account_service "github.com/neel4os/warg/internal/account-management/domain/account/service"
 	organization_service "github.com/neel4os/warg/internal/account-management/domain/organization/service"
+	user_service "github.com/neel4os/warg/internal/account-management/domain/user/service"
 	"github.com/neel4os/warg/internal/common/cache"
 	"github.com/neel4os/warg/internal/common/config"
 	"github.com/neel4os/warg/internal/common/database"
@@ -32,6 +33,8 @@ func (c *controller) Init() {
 	account_service.RegisterCommandHandlers(app.GetEventPlatform())
 	organization_service.RegisterEventHandlers(app.GetEventPlatform())
 	organization_service.RegisterCommandHandlers(app.GetEventPlatform())
+	user_service.RegisterEventHandlers(app.GetEventPlatform())
+	user_service.RegisterCommandHandlers(app.GetEventPlatform())
 }
 
 func (c *controller) Run() {

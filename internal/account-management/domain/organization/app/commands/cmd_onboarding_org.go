@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/datatypes"
 
+	organization "github.com/neel4os/warg/internal/account-management/domain/organization/aggregates"
 	"github.com/neel4os/warg/internal/account-management/domain/organization/aggregates/value"
 	persistence_organization "github.com/neel4os/warg/internal/account-management/persistence/organization"
 	"github.com/neel4os/warg/internal/common/config"
@@ -21,10 +22,13 @@ import (
 )
 
 type CreateOrgCommand struct {
-	AccountId  uuid.UUID `json:"account_id" valid:"uuid,required~account_id required and must be a valid uuid"`
-	OrgId      uuid.UUID
-	OrgName    string `json:"org_name" valid:"alphanum,required~org_name required and must be alphanumeric"`
-	DomainName string
+	AccountId      uuid.UUID `json:"account_id" valid:"uuid,required~account_id required and must be a valid uuid"`
+	OrgId          uuid.UUID
+	OrgName        string `json:"org_name" valid:"alphanum,required~org_name required and must be alphanumeric"`
+	DomainName     string
+	OwnerFirstName string `json:"owner_first_name" valid:"alphanum,required~owner_first_name required and must be alphanumeric"`
+	OwnerLastName  string `json:"owner_last_name" valid:"alphanum,required~owner_last_name required and must be alphanumeric"`
+	OwnerEmail     string `json:"owner_email" valid:"email,required~owner_email required and must be a valid email"`
 }
 
 type CreateOrgCommandHandler struct {
@@ -65,7 +69,14 @@ func (c *CreateOrgCommandHandler) Handle(ctx context.Context, cmd *CreateOrgComm
 		orgStream.StreamID(),
 		orgStream.StreamName()+"."+cmd.OrgId.String(),
 	)
-	_req_bytes, err := json.Marshal(cmd)
+	_org_data := organization.Organization{
+		ID:         cmd.OrgId,
+		Name:       cmd.OrgName,
+		AccountId:  cmd.AccountId,
+		DomainName: cmd.DomainName,
+		Status:     value.OrganizationStatusPending,
+	}
+	_req_bytes, err := json.Marshal(_org_data)
 	if err != nil {
 		log.Error().Err(err).Caller().Msg("Error while marshalling command")
 		return errors.NewJSONMarhsalError(err.Error())
@@ -82,6 +93,18 @@ func (c *CreateOrgCommandHandler) Handle(ctx context.Context, cmd *CreateOrgComm
 		// TODO: Delete the org from keycloak
 		log.Error().Caller().Err(err).Msg("failed to create event")
 		return errors.NewDatabaseOperationError("failed to create event")
+	}
+	err = c.eventBus.Publish(ctx, &organization.OrganizationCreated{
+		AccountId:      cmd.AccountId,
+		OrganizationId: cmd.OrgId,
+		OwnerEmail:     cmd.OwnerEmail,
+		OwnerFirstName: cmd.OwnerFirstName,
+		OwnerLastName:  cmd.OwnerLastName,
+	})
+	if err != nil {
+		log.Error().Caller().Err(err).Msg("failed to publish event")
+		tx.Rollback()
+		return errors.NewInternalServerError("failed to publish event")
 	}
 	// refresh the materialized view
 	// tx = tx.Exec("REFRESH MATERIALIZED VIEW CONCURRENTLY organization")

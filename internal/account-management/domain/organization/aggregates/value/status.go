@@ -6,7 +6,6 @@ type (
 
 const (
 	OrganizationStatusActive   OrganizationStatus = "active"
-	OrganizationStatusInactive OrganizationStatus = "inactive"
 	OrganizationStatusPending  OrganizationStatus = "pending"
 	OrganizationStatusDeleted  OrganizationStatus = "deleted"
 )

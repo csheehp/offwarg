@@ -34,9 +34,12 @@ func (c *CreateOrgOnAccountCreatedEventHandler) Handle(ctx context.Context, even
 		domain = email[atIdx+1:]
 	}
 	createOrgCommand := &commands.CreateOrgCommand{
-		AccountId:  event.AccountId,
-		OrgName:    event.AccountName,
-		DomainName: domain,
+		AccountId:      event.AccountId,
+		OrgName:        event.AccountName,
+		DomainName:     domain,
+		OwnerFirstName: event.FirstName,
+		OwnerLastName:  event.LastName,
+		OwnerEmail:     event.Email,
 	}
 	// send command to command bus
 	return c.commandBus.Send(ctx, createOrgCommand)
