@@ -7,6 +7,7 @@ import (
 
 	"github.com/neel4os/warg/internal/common/config"
 	"github.com/neel4os/warg/internal/common/database"
+	"github.com/neel4os/warg/internal/common/redis"
 	"github.com/neel4os/warg/internal/common/server/controller"
 	"github.com/neel4os/warg/migration"
 	"github.com/rs/zerolog/log"
@@ -18,7 +19,10 @@ func StartServer(cfg *config.Config) {
 	dbcon := database.GetDataConn(*cfg)
 	dbcon.Ping()
 	migration.DoMigration(cfg)
-
+	// then we check redis
+	rediscon := redis.GetRedisCon(cfg)
+	rediscon.Ping()
+	// then we start the server
 	ctrlr := controller.NewController(cfg, dbcon)
 	exit := make(chan os.Signal, 1)
 	signal.Notify(exit, os.Interrupt, syscall.SIGTERM, syscall.SIGINT, syscall.SIGABRT)

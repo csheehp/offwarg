@@ -7,15 +7,17 @@ import (
 	"github.com/neel4os/warg/internal/common/cache"
 	"github.com/neel4os/warg/internal/common/config"
 	"github.com/neel4os/warg/internal/common/keycloak"
+	"github.com/neel4os/warg/internal/common/redis"
 	"github.com/rs/zerolog/log"
 	"resty.dev/v3"
 )
 
-type UserKeycloakRepository struct {
-	cliet *resty.Client
+type UserConcreteRepository struct {
+	cliet       *resty.Client
+	redisClient *redis.RedisCon
 }
 
-func NewUserKeycloakRepository() *UserKeycloakRepository {
+func NewUserConcreteRepository() *UserConcreteRepository {
 	cfg := config.GetConfig()
 	cache := cache.NewIMCache(cfg)
 	token := cache.GetToken()
@@ -25,12 +27,14 @@ func NewUserKeycloakRepository() *UserKeycloakRepository {
 	restyClient.SetHeader("Accept", "application/json")
 	restyClient.SetRetryCount(3)
 	restyClient.SetBaseURL(cfg.IdpConfig.Url + "/admin/realms/" + cfg.IdpConfig.RealmName)
-	return &UserKeycloakRepository{
-		cliet: restyClient,
+	rediscon := redis.GetRedisCon(cfg)
+	return &UserConcreteRepository{
+		cliet:       restyClient,
+		redisClient: rediscon,
 	}
 }
 
-func (r *UserKeycloakRepository) CreateUser(email string, firstname string, lastname string) (string, error) {
+func (r *UserConcreteRepository) CreateUser(email string, firstname string, lastname string) (string, error) {
 	// Create a new user in Keycloak
 
 	resp, err := r.cliet.R().SetBody(keycloak.NewUserRepresentation(email, firstname, lastname)).Post("/users")

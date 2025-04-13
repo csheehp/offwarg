@@ -13,11 +13,19 @@ func RegisterEventHandlers(ep *eventstore.EventPlatform) {
 	if err != nil {
 		panic(err)
 	}
+	err = ep.AddEventProcessorHandler(cqrs.NewEventHandler("UserInvitedEvent", events.NewInviteUserEventHandler().Handle))
+	if err != nil {
+		panic(err)
+	}
 }
 
 func RegisterCommandHandlers(ep *eventstore.EventPlatform) {
 	log.Info().Str("component", "service").Msg("Registering command handlers")
 	err := ep.AddCommandProcessorHandler(cqrs.NewCommandHandler("UserCreated", commands.NewCreateUserCommandHandler().Handle))
+	if err != nil {
+		panic(err)
+	}
+	err = ep.AddCommandProcessorHandler(cqrs.NewCommandHandler("UserInvited", commands.NewInviteUserCommandHandler().Handle))
 	if err != nil {
 		panic(err)
 	}

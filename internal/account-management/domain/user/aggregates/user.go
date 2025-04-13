@@ -17,3 +17,10 @@ type User struct {
 	// UpdatedAt time.Time        `json:"updated_at"`
 	// IsManaged bool             `json:"is_managed"`
 }
+
+type UserCreated struct {
+	AccountId uuid.UUID `json:"account_id"`
+	OrgId     uuid.UUID `json:"org_id"`
+	UserId    uuid.UUID `json:"user_id"`
+	Email     string    `json:"email"`
+}

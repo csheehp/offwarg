@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	user "github.com/neel4os/warg/internal/account-management/domain/user/aggregates"
 	"github.com/neel4os/warg/internal/account-management/domain/user/aggregates/value"
+	user_repo "github.com/neel4os/warg/internal/account-management/domain/user/repositories"
 	persistence_user "github.com/neel4os/warg/internal/account-management/persistence/users"
 	"github.com/neel4os/warg/internal/common/config"
 	"github.com/neel4os/warg/internal/common/database"
@@ -32,7 +33,7 @@ type CreateUserCommand struct {
 type CreateUserCommandHandler struct {
 	eventRepo repositories.EventRepositories
 	eventBus  *cqrs.EventBus
-	idpRepo   *persistence_user.UserKeycloakRepository
+	idpRepo   user_repo.UserRepositoryInterface
 }
 
 func NewCreateUserCommandHandler() *CreateUserCommandHandler {
@@ -40,7 +41,7 @@ func NewCreateUserCommandHandler() *CreateUserCommandHandler {
 	dbcon := database.GetDataConn(*_config)
 	eventRepo := persistence.NewEventDatabaseRepository(dbcon)
 	eventPlatform := app.GetEventPlatform()
-	idpRepo := persistence_user.NewUserKeycloakRepository()
+	idpRepo := persistence_user.NewUserConcreteRepository()
 	return &CreateUserCommandHandler{
 		eventRepo: eventRepo,
 		eventBus:  eventPlatform.EventBus,
@@ -82,14 +83,23 @@ func (c *CreateUserCommandHandler) Handle(ctx context.Context, cmd *CreateUserCo
 		SetEventType("user_created").
 		SetEventData(datatypes.JSON(_req_bytes)).
 		SetMetadata(datatypes.JSON{})
-	// create the event
 	tx, err := c.eventRepo.CreateEvent(_event)
 	if err != nil {
 		log.Error().Err(err).Caller().Msg("Error while creating event")
 		tx.Rollback()
 		return errors.NewDatabaseOperationError(err.Error())
 	}
-	// publish the event
+	err = c.eventBus.Publish(ctx, &user.UserCreated{
+		AccountId: cmd.AccountId,
+		OrgId:     cmd.OrgId,
+		UserId:    cmd.UserId,
+		Email:     cmd.OwnerEmail,
+	})
+	if err != nil {
+		log.Error().Caller().Err(err).Msg("failed to publish event")
+		tx.Rollback()
+		return errors.NewInternalServerError("failed to publish event")
+	}
 	tx.Commit()
 	return nil
 }

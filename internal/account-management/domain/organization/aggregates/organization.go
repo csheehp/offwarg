@@ -20,3 +20,9 @@ type OrganizationCreated struct {
 	OwnerFirstName string
 	OwnerLastName  string
 }
+
+type OrganizationUpdatedUserMoved struct {
+	OrgId  uuid.UUID
+	UserId uuid.UUID
+	Email  string
+}

@@ -50,3 +50,17 @@ func (r *OrganizationKeycloakRepository) CreateOrganization(name string) (string
 	log.Info().Str("location", location).Msg("Organization created successfully")
 	return orgId, nil
 }
+
+func (r *OrganizationKeycloakRepository) AddMemberInOrganization(organizationId string, userId string) error {
+	resp, err := r.client.R().SetBody(userId).Post("/organizations/" + organizationId + "/members")
+	if err != nil {
+		log.Error().Err(err).Caller().Msg("Error while adding member in organization")
+		return err
+	}
+	if resp.IsError() {
+		log.Error().Str("response", string(resp.Bytes())).Caller().Msg("Error while adding member in organization")
+		return errors.New("Error while adding member in organization")
+	}
+	log.Info().Str("userId", userId).Str("organizationId", organizationId).Msg("Member added successfully in organization")
+	return nil
+}

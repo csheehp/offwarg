@@ -19,6 +19,20 @@ type Config struct {
 	LoggerConfig LoggerConfig
 	ServerConfig ServerConfig
 	DbConfig     DbConfig
+	RedisConfig  RedisConfig
+	SmtpConfig   SmtpConfig
+}
+
+type SmtpConfig struct {
+	Host string `env:"WARG_SMTPCONFIG_HOST" envDefault:"localhost"`
+	Port int `env:"WARG_SMTPCONFIG_PORT" envDefault:"2525"`
+}
+
+type RedisConfig struct {
+	Host     string `env:"WARG_REDISCONFIG_HOST" envDefault:"localhost"`
+	Port     string `env:"WARG_REDISCONFIG_PORT" envDefault:"26379"`
+	Db       int    `env:"WARG_REDISCONFIG_DB" envDefault:"0"`
+	Password string `env:"WARG_REDISCONFIG_PASS" envDefault:"redispassword"`
 }
 
 type DbConfig struct {
