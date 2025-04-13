@@ -19,8 +19,6 @@ func InitWarg(cmd *cobra.Command, args []string) error {
 	log.Info().Caller().Msg("Initializing Warg instance")
 	log.Info().Caller().Msg("Reading Warg configuration")
 	config := config.GetConfig()
-	log.Debug().Interface("config", config).Caller().Msg("Configuration loaded")
-	log.Debug().Caller().Msg("Initializing warg")
 	initializer := NewInitilizer(config)
 	if err := initializer.DoInitialize(); err != nil {
 		log.Fatal().Caller().Err(err).Msg("Failed to initialize")

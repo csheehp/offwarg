@@ -1,13 +1,14 @@
 package initialize
 
 import (
+	"errors"
+
 	"github.com/neel4os/warg/internal/common/config"
 	"github.com/rs/zerolog/log"
 )
 
 type verifier interface {
-	Verify() (error, bool)
-	Create() error
+	Verify() error
 	Name() string
 }
 
@@ -22,20 +23,19 @@ func NewInitilizer(cfg *config.Config) *wargInitialization {
 }
 
 func (w *wargInitialization) DoInitialize() error {
+	var isError bool
 	for _, v := range w.verifiers {
-		log.Debug().Str("verifier", v.Name()).Caller().Msg("Verifying " + v.Name())
-		err, ok := v.Verify()
+		log.Info().Str("verifier", v.Name()).Caller().Msg("Verifying " + v.Name())
+		err := v.Verify()
 		if err != nil {
-			log.Err(err).Caller().Msg("Error verifying")
-			return err
-		}
-		if !ok {
-			log.Debug().Str("verifier", v.Name()).Caller().Msg("Creating " + v.Name())
-			err = v.Create()
-			if err != nil {
-				return err
-			}
+			log.Err(err).Caller().Msg("Verification Error")
+			isError = true
 		}
 	}
+	if isError {
+		log.Error().Caller().Msg("Warg initialization failed")
+		return errors.New("Warg initialization failed")
+	}
+	log.Info().Caller().Msg("Warg initialization completed successfully")
 	return nil
 }
